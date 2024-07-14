@@ -1,6 +1,6 @@
-import 'package:intellibrax/app/app.dart';
-import 'package:intellibrax/bootstrap.dart';
+import 'package:intellibra/bootstrap.dart';
+import 'package:intellibra/src/app/app.dart';
 
 void main() {
-  bootstrap(() => const App());
+  bootstrap(() => const Intellibra());
 }

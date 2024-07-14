@@ -1,6 +1,13 @@
-import 'package:intellibrax/app/app.dart';
-import 'package:intellibrax/bootstrap.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intellibra/bootstrap.dart';
+import 'package:intellibra/src/app/app.dart';
+import 'package:intellibra/src/features/onboarding/thememode/cubit/theme_cubit.dart';
 
 void main() {
-  bootstrap(() => const App());
+  bootstrap(
+    () => BlocProvider(
+      create: (context) => ThemeCubit(),
+      child: const Intellibra(),
+    ),
+  );
 }
