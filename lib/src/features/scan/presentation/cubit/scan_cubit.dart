@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:intellibra/src/extensions/object.dart';
 import 'package:intellibra/src/features/scan/domain/scan_repository.dart';
-import 'package:meta/meta.dart';
 
 part 'scan_state.dart';
 
@@ -90,6 +88,26 @@ class ScanCubit extends Cubit<ScanState> {
     } catch (e) {
       //emit(ScanDeviceFailure(message: e.toString()));
     }
+  }
+
+  Future<void> connectToDevice() async {
+    emit(ScanDeviceConnectInit());
+    await Future.delayed(const Duration(seconds: 5), (){});
+    emit(ScanDeviceConnectSuccess());
+  }
+
+  Future<void> startScreening() async {
+      emit( const ScanScreeningInProgress(message:'Verifying Device state...'));
+    await Future.delayed(const Duration(seconds: 4), (){});
+    emit(const ScanScreeningInProgress(message:'Initiating sensors scanning'));
+    await Future.delayed(const Duration(seconds: 3), (){});
+    emit(const ScanScreeningInProgress(message:'Collecting Sensors data'));
+    await Future.delayed(const Duration(seconds: 3), (){});
+    emit(const ScanScreeningInProgress(message:'detecting any threats'));
+    await Future.delayed(const Duration(seconds: 2), (){});
+    emit(const ScanScreeningInProgress(message:'Scanning completed'));
+    await Future.delayed(const Duration(seconds: 1), (){});
+    emit( ScanScreeningSuccess());
   }
 
   Future<void> readCharacteristics(BluetoothDevice device) async {

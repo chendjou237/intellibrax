@@ -37,6 +37,8 @@ class TurnOnBluetoothFailure extends ScanState {
   final String message;
 }
 
+
+
 class ScanDeviceInit extends ScanState {}
 
 class ScanDeviceSuccess extends ScanState {
@@ -59,6 +61,10 @@ class ScanDeviceFailure extends ScanState {
 }
 
 class ScanDeviceConnectInit extends ScanState {}
+class ScanScreeningInProgress extends ScanState {
+  const ScanScreeningInProgress({required super.message});
+}
+class ScanScreeningSuccess extends ScanState {}
 
 class ScanDeviceConnectFailure extends ScanState {
   const ScanDeviceConnectFailure({required super.message});

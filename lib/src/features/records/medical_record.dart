@@ -76,11 +76,15 @@ const MedicalRecord({ super.key });
               ),
 
             ),
-            const Row(
+             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                 MetricsBox(title: 'Heart Rate',icon: Icons.monitor_heart_outlined,value: '110bpm',),
-                 MetricsBox(title: 'Body Temp',icon: Icons.thermostat,value: '33c'),
+                 MetricsBox(title: 'Heart Rate',icon: Icons.monitor_heart_outlined,value: '110bpm',values:   <double>[
+       5, 1, -6, 0, 10, -2, 7, -7, 4, -5, 11, 3, 4, -12, 11, 5, 7,
+     ],),
+                 MetricsBox(title: 'Body Temp',icon: Icons.thermostat,value: '33c', values:  <double>[
+       1, 5, -6, 0, 1, -2, 7, -7, -4, -10, 13, -6, 7, 5, 11, 5, 3,
+     ],),
               ],
             ),
           ],
@@ -92,15 +96,13 @@ const MedicalRecord({ super.key });
 
 class MetricsBox extends StatelessWidget {
   const MetricsBox({
-    Key? key,
-    required this.title,
-    required this.icon,
-    required this.value,
-  }) : super(key: key);
+    required this.title, required this.icon, required this.value, required this.values, super.key,
+  });
 
   final String title;
   final IconData icon;
   final String value;
+  final List<double> values;
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +125,7 @@ class MetricsBox extends StatelessWidget {
                     ],
                   ),
                   SfSparkLineChart(
-     data: const <double>[
-       1, 5, -6, 0, 1, -2, 7, -7, -4, -10, 13, -6, 7, 5, 11, 5, 3,
-     ],
+     data: values,
                     ),
                     Text(value, style: Theme.of(context).textTheme.headlineMedium),
                 ],

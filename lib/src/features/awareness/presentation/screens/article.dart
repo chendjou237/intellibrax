@@ -1,27 +1,50 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:ui';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intellibra/src/app/assets.dart';
 import 'package:intellibra/src/common/common.dart';
+import 'package:intellibra/src/common/widgets/toast.dart';
+import 'package:intellibra/src/configs/configs.dart';
 import 'package:intellibra/src/configs/intellibra_constants.dart';
 import 'package:intellibra/src/extensions/build_context.dart';
 import 'package:intellibra/src/extensions/num.dart';
-
 import 'package:intellibra/src/features/awareness/domain/awareness_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
-import 'package:intellibra/src/common/widgets/toast.dart';
+final Uri _url = Uri.parse('https://www.who.int/news-room/fact-sheets/detail/breast-cancer');
+
 
 @RoutePage()
-class ArticlePage extends StatelessWidget {
+class ArticlePage extends StatefulWidget {
   const ArticlePage({
     required this.article,
     super.key,
   });
   final ArticleModel article;
+
+  @override
+  State<ArticlePage> createState() => _ArticlePageState();
+}
+
+class _ArticlePageState extends State<ArticlePage> {
+  Future<void> _launchUrl() async {
+  if (!await launchUrl(_url)) {
+    throw Exception('Could not launch $_url');
+  }
+}
+    late VideoPlayerController _controller;
+@override
+void initState() {
+  super.initState();
+  _controller = VideoPlayerController.networkUrl(Uri.parse(
+        'https://www.youtube.com/watch?v=T2_L9dqW8eE&pp=ygUXYnJlYXN0IGNhbmNlciBhd2FyZW5lc3M%3D',),)
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
+
+}
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = context.mediaQuery.size.width > 760;
@@ -34,15 +57,20 @@ class ArticlePage extends StatelessWidget {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  if (article.imageUrl == null)
+                  if (widget.article.imageUrl == null)
                     Image.asset(Assets.articlePlaceholder)
                   else
                     Hero(
-                      tag: article.imageUrl!,
-                      child: Container(
+                      tag: widget.article.imageUrl!,
+                      child: _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(article.imageUrl!),
+                            image: NetworkImage(widget.article.imageUrl!),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -52,14 +80,19 @@ class ArticlePage extends StatelessWidget {
                     ),
                   16.vGap,
                   Hero(
-                    tag: article.title,
+                    tag: widget.article.title,
                     child: Text(
-                      article.title,
+                      widget.article.title,
                       style: context.theme.textTheme.headlineLarge!
                           .copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
+                  8.vGap,
+                  TextButton(onPressed: _launchUrl,
+                  child: Text('View Source',
+                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    fontWeight: FontWeight.w500, color: Palette.primary,),),),
                   8.vGap,
                   SingleChildScrollView(
                     child: Container(
@@ -78,9 +111,9 @@ class ArticlePage extends StatelessWidget {
                       ),
                       padding: EdgeInsets.symmetric(
                           horizontal: isLargeScreen ? 64 : 8,
-                          vertical: isLargeScreen ? 16 : 8),
+                          vertical: isLargeScreen ? 16 : 8,),
                       child: Text(
-                        article.content,
+                        widget.article.content,
                         style: context.theme.textTheme.titleMedium!
                             .copyWith(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
